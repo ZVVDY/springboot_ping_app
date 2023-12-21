@@ -1,6 +1,7 @@
 package com.example.springboot_ping_app.service.impl;
 
 import com.example.springboot_ping_app.dto.PingDto;
+import com.example.springboot_ping_app.dto.PingSearchDto;
 import com.example.springboot_ping_app.entity.Ping;
 import com.example.springboot_ping_app.mapper.PingMapper;
 import com.example.springboot_ping_app.repository.PingRepository;
@@ -48,7 +49,9 @@ public class PingServiceImpl implements PingService {
     }
 
     @Override
-    public List<Ping> search(String query, LocalDate fromDate, LocalDate toDate, String testStatus) {
+    public List<PingDto> search(PingSearchDto pingSearchDto) {
+
+
         return null;
     }
 }

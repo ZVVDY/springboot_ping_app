@@ -1,6 +1,7 @@
 package com.example.springboot_ping_app.service;
 
 import com.example.springboot_ping_app.dto.PingDto;
+import com.example.springboot_ping_app.dto.PingSearchDto;
 import com.example.springboot_ping_app.entity.Ping;
 import org.springframework.data.domain.Page;
 
@@ -16,5 +17,5 @@ public interface PingService {
 
     Optional<Ping> getResultById(Long id);
 
-    List<Ping> search(String query, LocalDate fromDate, LocalDate toDate, String testStatus);
+    List<PingDto> search(PingSearchDto pingSearchDto);
 }

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+<form th:object="${pingSearchDto}" th:action="@{/ping/search}" method="post">
+  <input type="text" name="ipAddressOrDomain" placeholder="Поиск по домену или IP" th:field="*{ipAddressOrDomain}"/>
+  <input type="text" name="startDate" placeholder="Дата от (yyyy-MM-dd)" th:field="*{startDate}"/>
+  <input type="text" name="endDate" placeholder="Дата до (yyyy-MM-dd)" th:field="*{endDate}"/>
+
+  <select name="testStatus">
+    <option value="">Все статусы</option>
+    <option value="success">Успешно</option>
+    <option value="failure">Неудача</option>
+  </select>
+  <button type="submit">Применить фильтры</button>
+</form>
+
+
+<table>
+
+</table>
+
+
+</body>
+</html>
