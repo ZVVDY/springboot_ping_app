@@ -37,7 +37,7 @@
     </tbody>
 </table>
 
-<div th:if="${currentPage > 0}">
+<div th:if="${currentPage > 1}">
     <a th:href="@{/ping/list(page=${currentPage - 1})}">Previous</a>
 </div>
 

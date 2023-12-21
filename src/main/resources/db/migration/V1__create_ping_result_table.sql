@@ -1,4 +1,4 @@
-CREATE TABLE ping_result (
+CREATE TABLE ping (
                              id SERIAL PRIMARY KEY,
                              ip_address VARCHAR(255),
                              domain VARCHAR(255),

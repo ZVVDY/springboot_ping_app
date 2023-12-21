@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 @Data
 public class PingDto {
-
+    private Long id;
     private String ipAddress;
     private String domain;
     private LocalDate checkDate;

@@ -36,7 +36,7 @@ public class PingServiceImpl implements PingService {
 
     @Override
     public Page<PingDto> getResultsWithPagination(int page) {
-        Pageable firstPageWithFiveElements = PageRequest.of(page - 1, 5, Sort.by("check_date")
+        Pageable firstPageWithFiveElements = PageRequest.of(page - 1, 5, Sort.by("domain")
                 .ascending());
         Page<Ping> pagePing = pingRepository.findAll(firstPageWithFiveElements);
         return pagePing.map(pingMapper::toDto);

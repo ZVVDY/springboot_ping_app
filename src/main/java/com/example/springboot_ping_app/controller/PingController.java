@@ -26,7 +26,7 @@ public class PingController {
     }
 
     @GetMapping("/list")
-    public String list(Model model, @RequestParam(defaultValue = "0") int page) {
+    public String list(Model model, @RequestParam(defaultValue = "1") int page) {
         Page<PingDto> resultsPage = pingService.getResultsWithPagination(page);
         List<PingDto> results = resultsPage.getContent();
 
