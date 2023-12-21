@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ping Result Details</title>
+</head>
+<body>
+
+<h1>Ping Result Details</h1>
+
+<table border="1">
+  <tr>
+    <th>ID</th>
+    <td th:text="${result.id}"></td>
+  </tr>
+  <tr>
+    <th>IP Address</th>
+    <td th:text="${result.ipAddress}"></td>
+  </tr>
+  <tr>
+    <th>Domain</th>
+    <td th:text="${result.domain}"></td>
+  </tr>
+  <tr>
+    <th>Check Date</th>
+    <td th:text="${result.checkDate}"></td>
+  </tr>
+  <tr>
+    <th>Test Status</th>
+    <td th:text="${result.testStatus}"></td>
+  </tr>
+  <tr>
+    <th>Ping Result</th>
+    <td th:text="${result.pingResult}"></td>
+  </tr>
+</table>
+
+</body>
+</html>

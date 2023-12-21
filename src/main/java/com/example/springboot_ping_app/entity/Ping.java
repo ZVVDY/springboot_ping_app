@@ -1,31 +1,29 @@
 package com.example.springboot_ping_app.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
-@Setter
-@AllArgsConstructor
+@Data
 @NoArgsConstructor
-public class PingResult {
+public class Ping {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    @Column(name = "ip_address")
     private String ipAddress;
 
     private String domain;
-
-    private Date checkDate;
-
+    @Column(name = "check_date")
+    private LocalDate checkDate;
+    @Column(name = "test_status")
     private String testStatus;
-
+    @Column(name = "ping_result", columnDefinition = "TEXT")
     private String pingResult;
 }

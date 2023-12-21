@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ping Results</title>
+</head>
+<body>
+
+<h1>Ping Results</h1>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>IP Address</th>
+        <th>Domain</th>
+        <th>Check Date</th>
+        <th>Test Status</th>
+        <th>Ping Result</th>
+        <th>Details</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="result : ${results}">
+        <td th:text="${result.id}"></td>
+        <td th:text="${result.ipAddress}"></td>
+        <td th:text="${result.domain}"></td>
+        <td th:text="${result.checkDate}"></td>
+        <td th:text="${result.testStatus}"></td>
+        <td th:text="${result.pingResult}"></td>
+        <td>
+            <a th:href="@{/ping/details/{id}(id=${result.id})}">Details</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<div th:if="${currentPage > 0}">
+    <a th:href="@{/ping/list(page=${currentPage - 1})}">Previous</a>
+</div>
+
+<div th:if="${currentPage < totalPages - 1}">
+    <a th:href="@{/ping/list(page=${currentPage + 1})}">Next</a>
+</div>
+
+</body>
+</html>
