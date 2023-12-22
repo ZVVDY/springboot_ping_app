@@ -1,1 +1,32 @@
+version: '3.1'
+
+
 services:
+  postgres:
+    image: postgres:15.4
+    environment:
+      POSTGRES_DB: ping_app_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5433:5433"
+    networks:
+      - ping_app_network
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  springbootapp:
+    image: your-spring-boot-app-image:latest
+    ports:
+      - "8081:8081"
+    depends_on:
+      - postgres
+    networks:
+      - ping_app_network
+
+networks:
+  ping_app_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
