@@ -2,7 +2,6 @@ package com.example.springboot_ping_app.controller;
 
 import com.example.springboot_ping_app.dto.PingDto;
 import com.example.springboot_ping_app.dto.PingSearchDto;
-import com.example.springboot_ping_app.entity.Ping;
 import com.example.springboot_ping_app.service.PingService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -11,9 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/ping")
@@ -37,25 +34,19 @@ public class PingController {
         return "pingResults";
     }
 
-    @GetMapping("/details/{id}")
-    public String details(@PathVariable Long id, Model model) {
-        Optional  result = pingService.getResultById(id);
-
-        model.addAttribute("result", result);
-        return "pingResultDetails";
-    }
-
     @GetMapping("/search")
     public String showSearchForm(Model model) {
         model.addAttribute("pingSearchDto", new PingSearchDto());
         return "pingSearch";
     }
+
     @PostMapping(value = "/search", produces = "text/html; charset=UTF-8")
     public String search(@Valid @ModelAttribute("pingSearchDto") PingSearchDto pingSearchDto, BindingResult bindingResult, Model model) {
 
-        if (bindingResult.hasErrors()){
-            model.addAttribute("org.springframework.validation.BindingResult.pingSearchDto", bindingResult);
-                        return "pingSearch";
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("org.springframework.validation.BindingResult.pingSearchDto",
+                    bindingResult);
+            return "pingSearch";
         }
 
         List<PingDto> results = pingService.search(pingSearchDto);
@@ -64,5 +55,5 @@ public class PingController {
 
         return "pingResultDetails";
 
-          }
+    }
 }

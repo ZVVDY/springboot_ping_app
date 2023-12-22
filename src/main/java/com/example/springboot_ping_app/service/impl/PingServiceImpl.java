@@ -14,7 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,11 +33,6 @@ public class PingServiceImpl implements PingService {
     }
 
     @Override
-    public List<Ping> getAllResults() {
-        return null;
-    }
-
-    @Override
     public Page<PingDto> getResultsWithPagination(int page) {
         Pageable firstPageWithFiveElements = PageRequest.of(page - 1, 5, Sort.by("domain")
                 .ascending());
@@ -47,30 +41,22 @@ public class PingServiceImpl implements PingService {
     }
 
     @Override
-    public Optional<Ping> getResultById(Long id) {
-        return null;
-    }
-
-    @Override
     public List<PingDto> search(PingSearchDto pingSearchDto) {
         Optional<PingSearchDto> optionalPingSearchDto = Optional.of(pingSearchDto);
         PingSearchDto pingSearch = optionalPingSearchDto.get();
         List<PingDto> pingDtos = searchToDb(pingSearchDto);
-
         return pingDtos;
     }
 
-    public List<PingDto> searchToDb(PingSearchDto pingSearchDto){
-        PingDto pingDto = new PingDto();
+
+    public List<PingDto> searchToDb(PingSearchDto pingSearchDto) {
         if (ipDomainValidator.isIpName((pingSearchDto.getIpAddressOrDomain()))) {
-            pingDto.setIpAddress(pingSearchDto.getIpAddressOrDomain());
             List<Ping> pings = pingRepository.findPingByIpAddress(pingSearchDto.getIpAddressOrDomain());
-            List<PingDto> pingDtos=pingMapper.modelsToDto(pings);
+            List<PingDto> pingDtos = pingMapper.modelsToDto(pings);
             return pingDtos;
         } else {
-            pingDto.setDomain(pingSearchDto.getIpAddressOrDomain());
             List<Ping> pings1 = pingRepository.findByDomain(pingSearchDto.getIpAddressOrDomain());
-            List<PingDto> pingDtos=pingMapper.modelsToDto(pings1);
+            List<PingDto> pingDtos = pingMapper.modelsToDto(pings1);
             return pingDtos;
         }
 
