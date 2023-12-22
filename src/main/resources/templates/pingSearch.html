@@ -5,10 +5,15 @@
 <body>
 <form th:object="${pingSearchDto}" th:action="@{/ping/search}" method="post">
   <input type="text" name="ipAddressOrDomain" placeholder="Поиск по домену или IP" th:field="*{ipAddressOrDomain}"/>
-  <input type="text" name="startDate" placeholder="Дата от (yyyy-MM-dd)" th:field="*{startDate}"/>
-  <input type="text" name="endDate" placeholder="Дата до (yyyy-MM-dd)" th:field="*{endDate}"/>
+  <span th:if="${#fields.hasErrors('ipAddressOrDomain')}" th:errors="*{ipAddressOrDomain}"></span>
 
-  <select name="testStatus">
+  <input type="date" id="startDate" placeholder="Дата от (yyyy-MM-dd)" th:field="*{startDate}"/>
+  <span th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}"></span>
+
+  <input type="date" id="endDate" placeholder="Дата до (yyyy-MM-dd)" th:field="*{endDate}"/>
+  <span th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}"></span>
+
+  <select name="testStatus" th:field="*{testStatus}">
     <option value="">Все статусы</option>
     <option value="success">Успешно</option>
     <option value="failure">Неудача</option>

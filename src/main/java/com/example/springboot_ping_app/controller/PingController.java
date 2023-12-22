@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -38,23 +39,30 @@ public class PingController {
 
     @GetMapping("/details/{id}")
     public String details(@PathVariable Long id, Model model) {
-        Optional result = pingService.getResultById(id);
+        Optional  result = pingService.getResultById(id);
 
         model.addAttribute("result", result);
         return "pingResultDetails";
     }
 
     @GetMapping("/search")
-    public String searchPage(@ModelAttribute("ping") PingDto pingDto) {
+    public String showSearchForm(Model model) {
+        model.addAttribute("pingSearchDto", new PingSearchDto());
         return "pingSearch";
     }
-    @PostMapping("/search")
-    public String search(@Valid PingSearchDto pingSearchDto, Model model) {
+    @PostMapping(value = "/search", produces = "text/html; charset=UTF-8")
+    public String search(@Valid @ModelAttribute("pingSearchDto") PingSearchDto pingSearchDto, BindingResult bindingResult, Model model) {
+
+        if (bindingResult.hasErrors()){
+            model.addAttribute("org.springframework.validation.BindingResult.pingSearchDto", bindingResult);
+                        return "pingSearch";
+        }
 
         List<PingDto> results = pingService.search(pingSearchDto);
 
         model.addAttribute("results", results);
 
-        return "pingSearch";
-    }
+        return "pingResultDetails";
+
+          }
 }

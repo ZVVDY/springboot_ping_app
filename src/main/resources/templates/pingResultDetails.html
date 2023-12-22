@@ -11,30 +11,27 @@
 <h1>Ping Result Details</h1>
 
 <table border="1">
+  <thead>
   <tr>
     <th>ID</th>
-    <td th:text="${result.id}"></td>
-  </tr>
-  <tr>
     <th>IP Address</th>
-    <td th:text="${result.ipAddress}"></td>
-  </tr>
-  <tr>
     <th>Domain</th>
-    <td th:text="${result.domain}"></td>
-  </tr>
-  <tr>
     <th>Check Date</th>
-    <td th:text="${result.checkDate}"></td>
-  </tr>
-  <tr>
     <th>Test Status</th>
-    <td th:text="${result.testStatus}"></td>
-  </tr>
-  <tr>
     <th>Ping Result</th>
+    <th>Details</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="result : ${results}">
+    <td th:text="${result.id}"></td>
+    <td th:text="${result.ipAddress}"></td>
+    <td th:text="${result.domain}"></td>
+    <td th:text="${result.checkDate}"></td>
+    <td th:text="${result.testStatus}"></td>
     <td th:text="${result.pingResult}"></td>
   </tr>
+  </tbody>
 </table>
 
 </body>

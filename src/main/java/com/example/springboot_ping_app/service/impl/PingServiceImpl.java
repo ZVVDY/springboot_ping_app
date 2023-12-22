@@ -6,6 +6,7 @@ import com.example.springboot_ping_app.entity.Ping;
 import com.example.springboot_ping_app.mapper.PingMapper;
 import com.example.springboot_ping_app.repository.PingRepository;
 import com.example.springboot_ping_app.service.PingService;
+import com.example.springboot_ping_app.util.IpDomainValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -13,7 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,11 +24,13 @@ public class PingServiceImpl implements PingService {
     private final PingRepository pingRepository;
 
     private final PingMapper pingMapper;
+    private final IpDomainValidator ipDomainValidator;
 
     @Autowired
-    public PingServiceImpl(PingRepository pingRepository, PingMapper pingMapper) {
+    public PingServiceImpl(PingRepository pingRepository, PingMapper pingMapper, IpDomainValidator ipDomainValidator) {
         this.pingRepository = pingRepository;
         this.pingMapper = pingMapper;
+        this.ipDomainValidator = ipDomainValidator;
     }
 
     @Override
@@ -50,8 +53,26 @@ public class PingServiceImpl implements PingService {
 
     @Override
     public List<PingDto> search(PingSearchDto pingSearchDto) {
+        Optional<PingSearchDto> optionalPingSearchDto = Optional.of(pingSearchDto);
+        PingSearchDto pingSearch = optionalPingSearchDto.get();
+        List<PingDto> pingDtos = searchToDb(pingSearchDto);
 
+        return pingDtos;
+    }
 
-        return null;
+    public List<PingDto> searchToDb(PingSearchDto pingSearchDto){
+        PingDto pingDto = new PingDto();
+        if (ipDomainValidator.isIpName((pingSearchDto.getIpAddressOrDomain()))) {
+            pingDto.setIpAddress(pingSearchDto.getIpAddressOrDomain());
+            List<Ping> pings = pingRepository.findPingByIpAddress(pingSearchDto.getIpAddressOrDomain());
+            List<PingDto> pingDtos=pingMapper.modelsToDto(pings);
+            return pingDtos;
+        } else {
+            pingDto.setDomain(pingSearchDto.getIpAddressOrDomain());
+            List<Ping> pings1 = pingRepository.findByDomain(pingSearchDto.getIpAddressOrDomain());
+            List<PingDto> pingDtos=pingMapper.modelsToDto(pings1);
+            return pingDtos;
+        }
+
     }
 }

@@ -11,16 +11,15 @@ import java.time.LocalDate;
 
 @Data
 public class PingSearchDto {
-    @NotNull
-    @Size(min = 4, max = 255, message = "Максимальная длина IP-адреса или домена -от 4 до 255 символов")
+    @Size(min = 4, max = 255, message = "Длина IP-адреса или домена -от 4 до 255 символов")
     private String ipAddressOrDomain;
-    @NotNull
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    @NotNull(message = "Поле не должно быть пустым")
     private LocalDate startDate;
-    @NotNull
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    @NotNull(message = "Поле не должно быть пустым")
     private LocalDate endDate;
-    @NotNull
-    @Pattern(regexp = "^(success|failure)$", message = "Статус должен быть 'success' или 'failure'")
+    @NotNull(message = "Поле не должно быть пустым")
+    //@Pattern(regexp = "^(success|failure)$", message = "Статус должен быть 'success' или 'failure'")
     private String testStatus;
 }
