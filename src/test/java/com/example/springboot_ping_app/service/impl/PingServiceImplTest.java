@@ -1,122 +1,105 @@
 package com.example.springboot_ping_app.service.impl;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
-
 import com.example.springboot_ping_app.dto.PingDto;
 import com.example.springboot_ping_app.dto.PingSearchDto;
 import com.example.springboot_ping_app.entity.Ping;
 import com.example.springboot_ping_app.mapper.PingMapper;
 import com.example.springboot_ping_app.repository.PingRepository;
 import com.example.springboot_ping_app.util.IpDomainValidator;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.data.domain.Sort;
 
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-@ExtendWith(SpringExtension.class)
-//@SpringBootTest
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
 public class PingServiceImplTest {
 
+    @Mock
     private PingRepository pingRepository;
+
+    @Mock
     private PingMapper pingMapper;
+
+    @Mock
     private IpDomainValidator ipDomainValidator;
+
+    @InjectMocks
     private PingServiceImpl pingService;
 
-    @BeforeEach
-    void setUp() {
-        pingRepository = mock(PingRepository.class);
-        pingMapper = mock(PingMapper.class);
-        ipDomainValidator = mock(IpDomainValidator.class);
-        pingService = new PingServiceImpl(pingRepository, pingMapper, ipDomainValidator);
-    }
-
     @Test
-    void testGetResultsWithPagination() {
-        Ping ping1 = new Ping();
-        ping1.setId(1L);
-        ping1.setDomain("example1.com");
+    public void testGetResultsWithPagination() {
+        int page = 1;
+        Pageable pageable = PageRequest.of(page - 1, 5, Sort.by("domain").ascending());
+        List<Ping> pings = new ArrayList<>();
+        pings.add(new Ping());
+        pings.add(new Ping());
+        Page<Ping> pagePing = new PageImpl<>(pings, pageable, pings.size());
 
-        Ping ping2 = new Ping();
-        ping2.setId(2L);
-        ping2.setDomain("example2.com");
+        when(pingRepository.findAll(pageable)).thenReturn(pagePing);
+        when(pingMapper.toDto(any(Ping.class))).thenReturn(new PingDto());
 
-        List<Ping> pingList = Arrays.asList(ping1, ping2);
+        Page<PingDto> result = pingService.getResultsWithPagination(page);
 
-        Page<Ping> page = new PageImpl<>(pingList);
-
-        when(pingRepository.findAll(any(Pageable.class))).thenReturn(page);
-
-        PingDto pingDto1 = new PingDto();
-        pingDto1.setId(1L);
-        pingDto1.setDomain("example1.com");
-
-        PingDto pingDto2 = new PingDto();
-        pingDto2.setId(2L);
-        pingDto2.setDomain("example2.com");
-
-        when(pingMapper.toDto(any(Ping.class))).thenReturn(pingDto1, pingDto2);
-
-        Page<PingDto> result = pingService.getResultsWithPagination(1);
-
-        assertEquals(2, result.getTotalElements());
         assertEquals(2, result.getContent().size());
-        assertEquals(1L, result.getContent().get(0).getId());
-        assertEquals("example1.com", result.getContent().get(0).getDomain());
-        assertEquals(2L, result.getContent().get(1).getId());
-        assertEquals("example2.com", result.getContent().get(1).getDomain());
+
+        verify(pingRepository, times(1)).findAll(pageable);
+        verify(pingMapper, times(2)).toDto(any(Ping.class)); // Verify the number of invocations
     }
 
     @Test
-    void testSearchIp() {
-        PingSearchDto searchDto = new PingSearchDto();
-        searchDto.setIpAddressOrDomain("192.168.1.1");
+    public void testSearchWithIpAddress() {
+        PingSearchDto pingSearchDto = new PingSearchDto();
+        pingSearchDto.setIpAddressOrDomain("127.0.0.1");
 
-        Ping ping = new Ping();
-        ping.setId(1L);
-        ping.setIpAddress(searchDto.getIpAddressOrDomain());
+        when(ipDomainValidator.isIpName(pingSearchDto.getIpAddressOrDomain())).thenReturn(true);
 
-        when(ipDomainValidator.isIpName(eq(searchDto.getIpAddressOrDomain()))).thenReturn(true);
+        List<Ping> pings = new ArrayList<>();
+        pings.add(new Ping());
+        when(pingRepository.findPingByIpAddress(pingSearchDto.getIpAddressOrDomain())).thenReturn(pings);
 
-        when(pingRepository.findPingByIpAddress(eq(searchDto.getIpAddressOrDomain()))).thenReturn(Collections.singletonList(ping));
+        List<PingDto> pingDtos = new ArrayList<>();
+        pingDtos.add(new PingDto());
+        when(pingMapper.modelsToDto(pings)).thenReturn(pingDtos);
 
-        when(pingMapper.modelsToDto(anyList())).thenReturn(Collections.singletonList(new PingDto()));
+        List<PingDto> result = pingService.search(pingSearchDto);
 
-        List<PingDto> result = pingService.searchToDb(searchDto);
-
-        assertEquals(1, result.size());
-        assertEquals(1L, result.get(0).getId());
-        assertEquals(searchDto.getIpAddressOrDomain(), result.get(0).getIpAddress());
+        assertEquals(pingDtos, result);
+        verify(pingRepository, times(1)).findPingByIpAddress(pingSearchDto.getIpAddressOrDomain());
+        verify(pingMapper, times(1)).modelsToDto(pings);
     }
 
     @Test
-    void testSearchDomain() {
-        PingSearchDto searchDto = new PingSearchDto();
-        searchDto.setIpAddressOrDomain("example.com");
+    public void testSearchWithDomain() {
+        PingSearchDto pingSearchDto = new PingSearchDto();
+        pingSearchDto.setIpAddressOrDomain("example.com");
 
-        Ping ping = new Ping();
-        ping.setId(1L);
-        ping.setDomain(searchDto.getIpAddressOrDomain());
+        when(ipDomainValidator.isIpName(pingSearchDto.getIpAddressOrDomain())).thenReturn(false);
 
-        when(ipDomainValidator.isIpName(eq(searchDto.getIpAddressOrDomain()))).thenReturn(false);
+        List<Ping> pings = new ArrayList<>();
+        pings.add(new Ping());
+        when(pingRepository.findByDomain(pingSearchDto.getIpAddressOrDomain())).thenReturn(pings);
 
-        when(pingRepository.findByDomain(eq(searchDto.getIpAddressOrDomain()))).thenReturn(Collections.singletonList(ping));
+        List<PingDto> pingDtos = new ArrayList<>();
+        pingDtos.add(new PingDto());
+        when(pingMapper.modelsToDto(pings)).thenReturn(pingDtos);
 
-        when(pingMapper.modelsToDto(anyList())).thenReturn(Collections.singletonList(new PingDto()));
+        List<PingDto> result = pingService.search(pingSearchDto);
 
-        List<PingDto> result = pingService.search(searchDto);
-
-        assertEquals(1, result.size());
-        assertEquals(1L, result.get(0).getId());
-        assertEquals(searchDto.getIpAddressOrDomain(), result.get(0).getDomain());
+        assertEquals(pingDtos, result);
+        verify(pingRepository, times(1)).findByDomain(pingSearchDto.getIpAddressOrDomain());
+        verify(pingMapper, times(1)).modelsToDto(pings);
     }
 }
-

@@ -1,6 +1,5 @@
 version: '3.1'
 
-
 services:
   postgres:
     image: postgres:15.4
@@ -16,7 +15,11 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   springbootapp:
-    image: your-spring-boot-app-image:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - ARG_NAME=ARG_VALUE
     ports:
       - "8081:8081"
     depends_on:
