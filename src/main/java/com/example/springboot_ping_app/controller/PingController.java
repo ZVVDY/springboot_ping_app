@@ -10,13 +10,17 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Controller
 @RequestMapping("/ping")
 public class PingController {
 
     private final PingService pingService;
+    private static final Logger logger = Logger.getLogger(PingController.class.getName());
 
     public PingController(PingService pingService) {
         this.pingService = pingService;
@@ -24,14 +28,18 @@ public class PingController {
 
     @GetMapping("/list")
     public String list(Model model, @RequestParam(defaultValue = "1") int page) {
-        Page<PingDto> resultsPage = pingService.getResultsWithPagination(page);
-        List<PingDto> results = resultsPage.getContent();
+        try {
+            Page<PingDto> resultsPage = pingService.getResultsWithPagination(page);
+                List<PingDto> results = resultsPage.getContent();
+                model.addAttribute("results", results);
+                model.addAttribute("currentPage", page);
+                model.addAttribute("totalPages", resultsPage.getTotalPages());
 
-        model.addAttribute("results", results);
-        model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", resultsPage.getTotalPages());
-
-        return "pingResults";
+            return "pingResults";
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Error occurred while retrieving results", e);
+            throw new RuntimeException("Error occurred while retrieving results", e);
+        }
     }
 
     @GetMapping("/search")
@@ -41,19 +49,22 @@ public class PingController {
     }
 
     @PostMapping(value = "/search", produces = "text/html; charset=UTF-8")
-    public String search(@Valid @ModelAttribute("pingSearchDto") PingSearchDto pingSearchDto, BindingResult bindingResult, Model model) {
+    public String search(@Valid @ModelAttribute("pingSearchDto") PingSearchDto pingSearchDto,
+                         BindingResult bindingResult, Model model) {
+        try {
+            if (bindingResult.hasErrors()) {
+                model.addAttribute("org.springframework.validation.BindingResult.pingSearchDto",
+                        bindingResult);
+                return "pingSearch";
+            }
 
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("org.springframework.validation.BindingResult.pingSearchDto",
-                    bindingResult);
-            return "pingSearch";
+            List<PingDto> results = pingService.search(pingSearchDto);
+            model.addAttribute("results", results);
+
+            return "pingResultDetails";
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Error occurred while performing search", e);
+            throw new RuntimeException("Error occurred while performing search", e);
         }
-
-        List<PingDto> results = pingService.search(pingSearchDto);
-
-        model.addAttribute("results", results);
-
-        return "pingResultDetails";
-
     }
 }
