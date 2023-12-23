@@ -1,7 +1,5 @@
 
-    <title>Ping Web Application</title>
-</head>
-<body>
+    #Ping Web Application 
 
     <h1>Ping Web Application</h1>
 
