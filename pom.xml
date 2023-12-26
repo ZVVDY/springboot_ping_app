@@ -118,7 +118,7 @@
 						<locations>
 							<location>filesystem:src/main/resources/db/migration</location>
 						</locations>
-						<url>jdbc:postgresql://localhost:5433/ping_app_db</url>
+						<url>jdbc:postgresql://host.docker.internal:5433/ping_app_db</url>
 						<user>postgres</user>
 						<password>admin</password>
 					</configuration>
