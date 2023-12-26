@@ -1,11 +1,23 @@
 version: '3.1'
 
 services:
-  app:
+  postgres:
+    image: 'postgres:latest'
+    restart: always
+    ports:
+      - '5433:5432'
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=ping_app_db
+    volumes:
+      - './postgres-data:/var/lib/postgresql/data'
+
+  ping_app:
     image: 'springboot_ping_app-image'
     build:
       context: .
-    container_name: app
+    container_name: ping_app
     depends_on:
       - postgres
       - flyway
@@ -24,15 +36,5 @@ services:
     depends_on:
       - postgres
 
-  postgres:
-    image: 'postgres:latest'
-    restart: always
-    ports:
-      - '5433:5432'
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=admin
-      - POSTGRES_DB=ping_app_db
-    volumes:
-      - './postgres-data:/var/lib/postgresql/data'
+
 
