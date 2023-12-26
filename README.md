@@ -51,8 +51,8 @@ This is a simple web application for a ping utility based on Spring Boot 3+.
     ```
 
 4. Access the application in your web browser:
-   
-    http://localhost:8081/ping/list
     ```
+    http://localhost:8081/ping/list
+    
     http://localhost:8081/ping/search
     ```
