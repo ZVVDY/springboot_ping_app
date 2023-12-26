@@ -13,13 +13,6 @@ services:
     volumes:
       - './postgres-data:/var/lib/postgresql/data'
 
-  flyway:
-    image: 'flyway/flyway:latest'
-    command: -url=jdbc:postgresql://postgres:5432/ping_app_db -schemas=public -user=postgres -password=admin migrate
-    volumes:
-      - './db/migration:/flyway/sql'
-    depends_on:
-      - postgres
 
   ping_app:
     image: 'springboot_ping_app-image'
@@ -36,5 +29,10 @@ services:
     ports:
       - '8081:8081'
 
-
-
+  flyway:
+    image: 'flyway/flyway:latest'
+    command: -url=jdbc:postgresql://postgres:5432/ping_app_db -schemas=public -user=postgres -password=admin migrate
+    volumes:
+      - './db/migration:/flyway/sql'
+    depends_on:
+      - postgres
