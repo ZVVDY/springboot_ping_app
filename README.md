@@ -24,22 +24,12 @@ This is a simple web application for a ping utility based on Spring Boot 3+.
     cd ping-web-app
     ```
 
-2. **Build the application with Maven:**
+2. **Build and start the Docker containers using Docker Compose:**
     ```bash
-    ./mvnw clean package
-    ```
-
-3. **Build and start the Docker containers using Docker Compose:**
-    ```bash
-    docker-compose up --build
+     docker build -t ping_app .
     ```
 
     This command will build the Docker images and start the containers for Tomcat9 and PostgreSQL.
-
-4. **Access the application in your web browser:**
-    ```
-    http://localhost:8081
-    ```
 
 ### Usage
 
@@ -51,23 +41,18 @@ This is a simple web application for a ping utility based on Spring Boot 3+.
 
 ### Running Locally
 
-1. Ensure you have PostgreSQL running locally on port 5432.
+1. Ensure you have PostgreSQL running locally on port 5433.
 
 2. Update the `application.properties` file in the `src/main/resources` directory with your local PostgreSQL configuration.
 
-3. Run the application using Maven:
+3. Run the application using Docker:
     ```bash
-    ./mvnw spring-boot:run
+    docker run -p 8081:8081 ping_app
     ```
 
 4. Access the application in your web browser:
+   
+    http://localhost:8081/ping/list
     ```
-    http://localhost:8081
+    http://localhost:8081/ping/search
     ```
-
-### Database Migrations
-
-Database migrations are managed using Flyway. To apply migrations manually, run the following Maven command:
-
-```bash
-./mvnw flyway:migrate
