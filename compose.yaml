@@ -5,7 +5,7 @@ services:
     image: 'postgres:latest'
     restart: always
     ports:
-      - '5433:5432'
+      - '5433:5433'
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=admin
@@ -23,7 +23,7 @@ services:
       - postgres
       - flyway
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/ping_app_db
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5433/ping_app_db
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=admin
     ports:
@@ -31,7 +31,7 @@ services:
 
   flyway:
     image: 'flyway/flyway:latest'
-    command: -url=jdbc:postgresql://postgres:5432/ping_app_db -schemas=public -user=postgres -password=admin migrate
+    command: -url=jdbc:postgresql://postgres:5433/ping_app_db -schemas=public -user=postgres -password=admin migrate
     volumes:
       - './db/migration:/flyway/sql'
     depends_on:
