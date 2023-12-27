@@ -15,7 +15,7 @@ services:
 
 
   ping_app:
-    image: 'springboot_ping_app-image'
+    image: 'ping_app-image'
     build:
       context: .
     container_name: ping_app
